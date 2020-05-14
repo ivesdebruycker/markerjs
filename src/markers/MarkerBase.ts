@@ -60,6 +60,8 @@ export class MarkerBase {
         if (this.isResizing) {
             this.resize(dx, dy);
         }
+        this.previousMouseX = ev.screenX;
+        this.previousMouseY = ev.screenY;
     }
 
     public endManipulation() {
@@ -163,7 +165,6 @@ export class MarkerBase {
         this.isDragging = true;
         this.previousMouseX = ev.screenX;
         this.previousMouseY = ev.screenY;
-        this.previousState = this.getState();
     }
     private mouseUp = (ev: MouseEvent) => {
         ev.stopPropagation();
@@ -175,11 +176,8 @@ export class MarkerBase {
     }
 
     private move = (dx: number, dy: number) => {
-        const previousX = this.previousState ? this.previousState.translateX : 0;
-        const previousY = this.previousState ? this.previousState.translateY : 0;
-
         const translate = this.visual.transform.baseVal.getItem(0);
-        translate.setTranslate(previousX + dx, previousY + dy);
+        translate.setMatrix(translate.matrix.translate(dx, dy));
         this.visual.transform.baseVal.replaceItem(translate, 0);
     }
 }
